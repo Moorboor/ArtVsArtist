@@ -5,7 +5,7 @@ import random
 class Module():
 
     def zero_grad(self):
-        for p in self.parameters:
+        for p in self.parameters():
             p.gradient = 0
 
     def parameters(self):
