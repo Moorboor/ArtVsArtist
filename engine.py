@@ -32,6 +32,15 @@ class Value():
         out._backward = _backward 
         return out
 
+    def __pow__(self, other):
+        out = Value(self.value**other, parent=(self,), func="**")
+        
+        def _backward():
+            self.gradient += (other*self.value**(other-1)) * out.gradient
+        out._backward = _backward
+
+        return out 
+
     def relu(self):
         out = Value(self.value if self.value > 0 else 0, (self,), "relu")
 
@@ -73,6 +82,8 @@ class Value():
     
     def __rmul__(self, other): # other * self
         return self * other
+    
+
     
 
 # a = Value(5)
