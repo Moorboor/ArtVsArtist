@@ -26,6 +26,33 @@ class Neuron(Module):
     def parameters(self):
         return self.w + [self.b]
     
+    def __repr__(self):
+        return f"{'ReLU' if self.nonlin else 'Linear'}Neuron({len(self.w)})"
+    
+
+class CNN_Layer(Module):
+    # shape must be squared
+    
+    def __init__(self, shape, nfilters, **kwargs):
+        self.nfilters = nfilters
+        self.shape = shape
+        self.neurons = [Neuron(shape**2, **kwargs) for _ in range(nfilters)]
+    
+    def __call__(self, x):
+        out = []
+        for n in self.neurons:
+            for i in range(self.shape):
+                
+                for j in range(len(x[0])+ self.shape):
+                    subl = x[i, j:j+self.shape]
+        return out
+    
+    def filter(self, x):
+        out = []
+        for x_row in x:
+            out.append([n(pixel) for pixel in x_row])
+        return out
+    
 
 class Layer(Module):
 
@@ -38,6 +65,9 @@ class Layer(Module):
     
     def parameters(self):
         return [p for n in self.neurons for p in n.parameters()]
+    
+    def __repr__(self):
+        return f"Layer of [{', '.join(str(n) for n in self.neurons)}]"
 
 class MLP(Module):
 
@@ -53,6 +83,8 @@ class MLP(Module):
     def parameters(self):
         return [p for l in self.layers for p in l.parameters()]
     
+    def __repr__(self):
+        return f"MLP of [{', '.join(str(layer) for layer in self.layers)}]"
 
 # mlp = MLP(2, [5, 2, 1])
 
